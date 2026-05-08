@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HantaRadar - Fatal Strain Tracker</titl>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .leaflet-marker-icon { border: none; background: none; }
+    </style>
+</head>
+<body>
+    <div id="map"></div.
+    <div id="sidebar" class="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-title">
+                <h1>HantaRadar</h1>
+                <span class="subtitle">Fatal Strain Tracker</span>
+            </div>
+            <button id="close-sidebar" class="close-btn">&times;</button>
+        </div.
+        <div id="sidebar-content" class="sidebar-content">
+            <div class="empty-state">
+                <p>Select a marker/cluster on the map to view outbreak details and live news.</p>
+            </div>
+        </div>
+    </div.
+    <div class="controls-overlay">
+        <div class="filter-group">
+            <label>Timespan</label>
+            <select id="timespan-filter">
+                <option value="7">Last 7 Days</option>
+                <option value="30" selected>Last 30 Days</option>
+                <option value="90">Last 3 Months</option>
+                <option value="180">Last 6 Months</option>
+            </select>
+        </div.
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+    <script src="seed_data.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
