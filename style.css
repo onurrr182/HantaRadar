@@ -1,0 +1,13 @@
+/* HantaRadar style.css */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+:root {
+    --bg-primary: #060b18;
+    --bg-secondary: #0d1526;
+    --amber: #f5a623;
+    --red: #e63946;
+    --text-primary: #f0f4ff;
+    --header-h: 60px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Inter', sans-serif; background: var(--bg-primary); color: var(--text-primary); }
+#map { position: fixed; top: var(--header-h); left: 0; right: 0; bottom: 0; }
