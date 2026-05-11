@@ -1,51 +1,134 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HantaRadar - Fatal Strain Tracker</titl>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
-    <link rel="stylesheet" href="style.css" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        .leaflet-marker-icon { border: none; background: none; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HantaRadar — Global Hantavirus Outbreak Tracker</title>
+  <meta name="description" content="Real-time global hantavirus outbreak tracker. Live news from thousands of international sources plotted on an interactive map.">
+  <meta property="og:title" content="HantaRadar — Global Hantavirus Tracker">
+  <meta property="og:description" content="Interactive map of hantavirus news and outbreaks worldwide, powered by GDELT.">
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
+
+  <!-- App CSS -->
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="map"></div.
-    <div id="sidebar" class="sidebar">
-        <div class="sidebar-header">
-            <div class="sidebar-title">
-                <h1>HantaRadar</h1>
-                <span class="subtitle">Fatal Strain Tracker</span>
-            </div>
-            <button id="close-sidebar" class="close-btn">&times;</button>
-        </div.
-        <div id="sidebar-content" class="sidebar-content">
-            <div class="empty-state">
-                <p>Select a marker/cluster on the map to view outbreak details and live news.</p>
-            </div>
-        </div>
-    </div.
-    <div class="controls-overlay">
-        <div class="filter-group">
-            <label>Timespan</label>
-            <select id="timespan-filter">
-                <option value="7">Last 7 Days</option>
-                <option value="30" selected>Last 30 Days</option>
-                <option value="90">Last 3 Months</option>
-                <option value="180">Last 6 Months</option>
-            </select>
-        </div.
+
+  <!-- ── Loading Overlay ── -->
+  <div id="loading-overlay" class="loading-overlay">
+    <div class="loading-content">
+      <div class="bio-spinner">
+        <svg viewBox="0 0 100 100" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <!-- Biohazard symbol -->
+          <circle cx="50" cy="50" r="8"/>
+          <!-- Lobe top -->
+          <path d="M50 42 A18 18 0 0 1 65.6 51 L72 44.4 A26 26 0 0 0 50 28 Z"/>
+          <path d="M50 42 A18 18 0 0 0 34.4 51 L28 44.4 A26 26 0 0 1 50 28 Z"/>
+          <!-- Lobe bottom-right -->
+          <path d="M56.6 54.5 A18 18 0 0 1 53.1 72.3 L62.2 75.9 A26 26 0 0 0 72 51 L65.6 51 Z"/>
+          <!-- Lobe bottom-left -->
+          <path d="M43.4 54.5 A18 18 0 0 0 46.9 72.3 L37.8 75.9 A26 26 0 0 1 28 51 L34.4 51 Z"/>
+          <!-- Outer ring arcs -->
+          <path fill-rule="evenodd" d="M50 10 A40 40 0 0 1 84.6 70 L78 66.5 A33 33 0 0 0 50 17 Z"/>
+          <path fill-rule="evenodd" d="M50 10 A40 40 0 0 0 15.4 70 L22 66.5 A33 33 0 0 1 50 17 Z"/>
+          <path fill-rule="evenodd" d="M84.6 70 A40 40 0 0 1 15.4 70 L22 66.5 A33 33 0 0 0 78 66.5 Z"/>
+          <!-- Inner clear ring -->
+          <circle cx="50" cy="50" r="13" fill="none" stroke-width="5" stroke="currentColor"
+            style="fill:none;stroke:var(--bg-primary,#060b18);stroke-width:5"/>
+        </svg>
+      </div>
+      <h2>HantaRadar</h2>
+      <p id="loading-status">Connecting to international news sources…</p>
+      <div class="loading-bar">
+        <div class="loading-bar-fill" id="loading-progress"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Header ── -->
+  <header class="app-header">
+    <div class="header-left">
+      <div class="logo">
+        <!-- Biohazard icon (mini) -->
+        <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="12" cy="12" r="2.2"/>
+          <path d="M12 9.8A4.4 4.4 0 0 1 15.8 12.2L17.6 10.6A6.6 6.6 0 0 0 12 7 Z"/>
+          <path d="M12 9.8A4.4 4.4 0 0 0 8.2 12.2L6.4 10.6A6.6 6.6 0 0 1 12 7 Z"/>
+          <path d="M15.8 12.2A4.4 4.4 0 0 1 13.2 16.2L14.8 17.9A6.6 6.6 0 0 0 17.6 12.2 Z"/>
+          <path d="M8.2 12.2A4.4 4.4 0 0 0 10.8 16.2L9.2 17.9A6.6 6.6 0 0 1 6.4 12.2 Z"/>
+        </svg>
+        <span class="logo-text">HantaRadar</span>
+      </div>
+      <div class="live-badge">
+        <span class="live-dot"></span>
+        LIVE
+      </div>
     </div>
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
-    <script src="seed_data.js"></script>
-    <script src="app.js"></script>
+    <div class="header-center">
+      <div class="stats-bar">
+        <div class="stat"><span id="stat-articles">—</span><small>Articles</small></div>
+        <div class="stat"><span id="stat-locations">—</span><small>Locations</small></div>
+        <div class="stat"><span id="stat-updated">—</span><small>Updated</small></div>
+      </div>
+    </div>
+
+    <div class="header-right">
+      <div class="timespan-filter">
+        <button class="filter-btn" data-timespan="7days" id="filter-7d">7D</button>
+        <button class="filter-btn active" data-timespan="1month" id="filter-1m">1M</button>
+        <button class="filter-btn" data-timespan="3months" id="filter-3m">3M</button>
+        <button class="filter-btn" data-timespan="6months" id="filter-6m">6M</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── Map ── -->
+  <div id="map"></div>
+
+  <!-- ── Sidebar ── -->
+  <aside id="sidebar" class="sidebar" role="complementary" aria-label="Location details">
+    <div class="sidebar-header">
+      <h3 id="sidebar-location">Select a pin</h3>
+      <button id="sidebar-close" class="sidebar-close" aria-label="Close sidebar">×</button>
+    </div>
+    <div id="sidebar-content" class="sidebar-content"></div>
+  </aside>
+
+  <!-- ── Map Layer Controls ── -->
+  <div class="map-controls">
+    <button id="toggle-live" class="control-btn active" title="Toggle live news pins">
+      <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="5"/><path d="M12 2a1 1 0 0 1 1 1v2a1 1 0 0 1-2 0V3a1 1 0 0 1 1-1zm0 16a1 1 0 0 1 1 1v2a1 1 0 0 1-2 0v-2a1 1 0 0 1 1-1zM2 12a1 1 0 0 1 1-1h2a1 1 0 0 1 0 2H3a1 1 0 0 1-1-1zm16 0a1 1 0 0 1 1-1h2a1 1 0 0 1 0 2h-2a1 1 0 0 1-1-1z"/></svg>
+      Live News
+    </button>
+    <button id="toggle-historical" class="control-btn active" title="Toggle historical outbreak pins">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 3a9 9 0 0 0-9 9H1l3.89 3.89.07.14L9 12H6a7 7 0 1 1 2.05 4.95L6.63 18.37A9 9 0 1 0 13 3zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+      Historical
+    </button>
+  </div>
+
+  <!-- ── Legend ── -->
+  <div class="map-controls" style="bottom:28px;right:20px;left:auto;">
+    <div class="control-btn" style="cursor:default;gap:12px;">
+      <span style="display:flex;align-items:center;gap:6px;">
+        <span style="width:12px;height:12px;border-radius:50%;background:#e63946;box-shadow:0 0 8px #e63946;display:inline-block;"></span>
+        <span style="font-size:0.75rem;color:var(--text-secondary)">Live news</span>
+      </span>
+      <span style="display:flex;align-items:center;gap:6px;">
+        <span style="width:12px;height:12px;border-radius:50%;background:#f5a623;box-shadow:0 0 8px #f5a623;display:inline-block;"></span>
+        <span style="font-size:0.75rem;color:var(--text-secondary)">Historical</span>
+      </span>
+    </div>
+  </div>
+
+  <!-- ── Scripts ── -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+  <script src="seed_data.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
